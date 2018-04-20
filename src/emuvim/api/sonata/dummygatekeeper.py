@@ -105,6 +105,9 @@ SAP_VNFD=None
 # Time in seconds to wait for vnf stop scripts to execute fully
 VNF_STOP_WAIT_TIME = 5
 
+# EVAL HACK
+EVAL_ARGS = None
+
 class Gatekeeper(object):
 
     def __init__(self):
@@ -277,6 +280,7 @@ class Service(object):
         :return:
         """
         # the vnf_name refers to the container image to be deployed
+        
         vnf_name = vnfd.get("name")
 
         # iterate over all deployment units within each VNFDs
@@ -1089,7 +1093,7 @@ def start_rest_api(host, port, datacenters=dict()):
     # start the Flask server (not the best performance but ok for our use case)
     app.run(host=host,
             port=port,
-            debug=True,
+            debug=False,
             use_reloader=False  # this is needed to run Flask in a non-main thread
             )
 
