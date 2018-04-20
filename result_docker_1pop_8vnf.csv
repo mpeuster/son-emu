@@ -1,3 +1,11 @@
 ,mode,pops,repetition_id,service,time_emulator_boot,time_service_instantiate,time_service_onboard,time_total
-0,docker,1,0,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.3817050457,7.85179209709,1.64117598534,11.8748281002
-1,docker,1,1,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.36764907837,7.88146400452,1.62773489952,11.877063036
+0,docker,1,0,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.38257098198,11.130231142,0.232180118561,13.7451059818
+1,docker,1,1,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.35234093666,10.9491639137,0.229316949844,13.5309679508
+2,docker,1,2,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.35884404182,10.7378621101,0.231611967087,13.3284759521
+3,docker,1,3,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.43023014069,11.2285449505,0.229939937592,13.8888328075
+4,docker,1,4,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.43369078636,11.2671611309,0.227359056473,13.9283349514
+5,docker,1,5,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.42539405823,11.1943538189,0.225786924362,13.8456540108
+6,docker,1,6,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.4269618988,11.0404360294,0.232183933258,13.6997129917
+7,docker,1,7,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.44033193588,11.0673260689,0.235128164291,13.742923975
+8,docker,1,8,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.42334008217,10.935721159,0.229821205139,13.5890059471
+9,docker,1,9,examples/sonata_pkgs/eu.sonata-nfv.vfoward-8-1-test.0.8.1-docker.son,2.43876791,11.0851891041,0.23152089119,13.7556190491
