@@ -1,2 +1,2 @@
 ,mode,pops,repetition_id,service,time_emulator_boot,time_service_instantiate,time_service_onboard,time_total
-0,docker,1,0,examples/sonata_pkgs/eu.sonata-nfv.vfoward-2-1-test.0.2.1-vm.son,2.47067689896,34.4972441196,0.14461517334,37.1126430035
+0,docker,1,0,examples/sonata_pkgs/eu.sonata-nfv.vfoward-2-1-test.0.2.1-vm.son,2.42900800705,55.714635849,0.103880167007,58.2476408482
