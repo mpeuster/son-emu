@@ -285,17 +285,21 @@ class Service(object):
 
         # iterate over all deployment units within each VNFDs
         for u in vnfd.get("virtual_deployment_units"):
-            # 1. get the name of the docker image to start and the assigned DC
-            if vnf_id not in self.remote_docker_image_urls:
-                raise Exception("No image name for %r found. Abort." % vnf_id)
-            docker_name = self.remote_docker_image_urls.get(vnf_id)
+            docker_name = None
+            vm_name = None
+            if u.get("vm_image_format") == "docker":
+                # 1. get the name of the docker image to start and the assigned DC
+                if vnf_id not in self.remote_docker_image_urls:
+                    raise Exception("No image name for %r found. Abort." % vnf_id)
+                docker_name = self.remote_docker_image_urls.get(vnf_id)
+                assert(docker_name is not None)
+                if not self._check_docker_image_exists(docker_name):
+                    raise Exception("Docker image %r not found. Abort." % docker_name)
+            else:  # VM prototype
+                vm_name = u.get("vm_image")
+            # 2. get target dc
             target_dc = vnfd.get("dc")
-            # 2. perform some checks to ensure we can start the container
-            assert(docker_name is not None)
             assert(target_dc is not None)
-            if not self._check_docker_image_exists(docker_name):
-                raise Exception("Docker image %r not found. Abort." % docker_name)
-
             # 3. get the resource limits
             res_req = u.get("resource_requirements")
             cpu_list = res_req.get("cpu").get("cores")
@@ -355,9 +359,10 @@ class Service(object):
             # TODO: get all vnf id's from the nsd for this vnfd and use those as dockername
             # use the vnf_id in the nsd as docker name
             # so deployed containers can be easily mapped back to the nsd
-            LOG.info("Starting %r as %r in DC %r" % (vnf_name, vnf_id, vnfd.get("dc")))
-            LOG.debug("Interfaces for %r: %r" % (vnf_id, intfs))
-            vnfi = target_dc.startCompute(
+            if docker_name is not None:
+                LOG.info("Starting %r as %r in DC %r" % (vnf_name, vnf_id, vnfd.get("dc")))
+                LOG.debug("Interfaces for %r: %r" % (vnf_id, intfs))
+                vnfi = target_dc.startCompute(
                     vnf_id,
                     network=intfs,
                     image=docker_name,
@@ -368,12 +373,23 @@ class Service(object):
                     mem_limit=mem_lim,
                     volumes=volumes,
                     type=kwargs.get('type','docker'))
+                vnfi.type = "docker"
+            elif vm_name is not None:  # VM prototye
+                LOG.info("Starting %r as %r in DC %r" % (vnf_name, vnf_id, vnfd.get("dc")))
+                LOG.debug("Interfaces for %r: %r" % (vnf_id, intfs))
+                vnfi = target_dc.startCompute(
+                    vnf_id,
+                    network=intfs,
+                    image=vm_name,
+                    type="vm")
+                vnfi.type = "vm"
+            else:
+                raise Exception("Unknown VNF type. Abort.")
 
             # rename the docker0 interfaces (eth0) to the management port name defined in the VNFD
             if USE_DOCKER_MGMT:
                 for intf_name in mgmt_intf_names:
                     self._vnf_reconfigure_network(vnfi, 'eth0', new_name=intf_name)
-
             return vnfi
 
     def _stop_vnfi(self, vnfi):
@@ -434,6 +450,8 @@ class Service(object):
 
     def _trigger_emulator_start_scripts_in_vnfis(self, vnfi_list):
         for vnfi in vnfi_list:
+            if vnfi.type == "vm":
+                continue
             config = vnfi.dcinfo.get("Config", dict())
             env = config.get("Env", list())
             for env_var in env:
@@ -448,6 +466,8 @@ class Service(object):
 
     def _trigger_emulator_stop_scripts_in_vnfis(self, vnfi_list):
         for vnfi in vnfi_list:
+            if vnfi.type == "vm":
+                continue
             config = vnfi.dcinfo.get("Config", dict())
             env = config.get("Env", list())
             for env_var in env:
@@ -652,13 +672,16 @@ class Service(object):
 
             # Set the chaining
             if setChaining:
-                ret = GK.net.setChain(
-                    src_id, dst_id,
-                    vnf_src_interface=src_if_name, vnf_dst_interface=dst_if_name,
-                    bidirectional=BIDIRECTIONAL_CHAIN, cmd="add-flow", cookie=cookie, priority=10)
-                LOG.debug(
-                    "Setting up E-Line link. (%s:%s) -> (%s:%s)" % (
-                        src_id, src_if_name, dst_id, dst_if_name))
+                try:
+                    ret = GK.net.setChain(
+                        src_id, dst_id,
+                        vnf_src_interface=src_if_name, vnf_dst_interface=dst_if_name,
+                        bidirectional=BIDIRECTIONAL_CHAIN, cmd="add-flow", cookie=cookie, priority=10)
+                    LOG.debug(
+                        "Setting up E-Line link. (%s:%s) -> (%s:%s)" % (
+                            src_id, src_if_name, dst_id, dst_if_name))
+                except BaseException as e:
+                    LOG.error(e)
 
 
     def _connect_elans(self, elan_fwd_links, instance_uuid):

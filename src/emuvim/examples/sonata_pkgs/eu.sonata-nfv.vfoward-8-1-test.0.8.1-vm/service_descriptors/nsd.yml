@@ -1,0 +1,167 @@
+author: Thomas Soenen
+connection_points:
+- id: mgmt
+  interface: ipv4
+  type: management
+- id: input
+  interface: ipv4
+  type: external
+- id: output
+  interface: ipv4
+  type: external
+description: vFoward for 8 VNFs on 1 PoPs.
+descriptor_version: '1.0'
+forwarding_graphs:
+- constituent_vnfs:
+  - vforward_vnf_1_1
+  - vforward_vnf_2_1
+  - vforward_vnf_3_1
+  - vforward_vnf_4_1
+  - vforward_vnf_5_1
+  - vforward_vnf_6_1
+  - vforward_vnf_7_1
+  - vforward_vnf_8_1
+  fg_id: ns:fg01
+  network_forwarding_paths:
+  - connection_points:
+    - connection_point_ref: input
+      position: 1
+    - connection_point_ref: vforward_vnf_1_1:input
+      position: 2
+    - connection_point_ref: vforward_vnf_1_1:output
+      position: 3
+    - connection_point_ref: vforward_vnf_2_1:input
+      position: 4
+    - connection_point_ref: vforward_vnf_2_1:output
+      position: 5
+    - connection_point_ref: vforward_vnf_3_1:input
+      position: 6
+    - connection_point_ref: vforward_vnf_3_1:output
+      position: 7
+    - connection_point_ref: vforward_vnf_4_1:input
+      position: 8
+    - connection_point_ref: vforward_vnf_4_1:output
+      position: 9
+    - connection_point_ref: vforward_vnf_5_1:input
+      position: 10
+    - connection_point_ref: vforward_vnf_5_1:output
+      position: 11
+    - connection_point_ref: vforward_vnf_6_1:input
+      position: 12
+    - connection_point_ref: vforward_vnf_6_1:output
+      position: 13
+    - connection_point_ref: vforward_vnf_7_1:input
+      position: 14
+    - connection_point_ref: vforward_vnf_7_1:output
+      position: 15
+    - connection_point_ref: vforward_vnf_8_1:input
+      position: 16
+    - connection_point_ref: vforward_vnf_8_1:output
+      position: 17
+    - connection_point_ref: output
+      position: 18
+    fp_id: ns:fg01:fp01
+    policy: none
+  number_of_endpoints: 2
+  number_of_virtual_links: 9
+name: vfoward-8-1
+network_functions:
+- vnf_id: vforward_vnf_1_1
+  vnf_name: vforward-vnf-1-1
+  vnf_vendor: everything-must-go
+  vnf_version: 0.1.1
+- vnf_id: vforward_vnf_2_1
+  vnf_name: vforward-vnf-2-1
+  vnf_vendor: everything-must-go
+  vnf_version: 0.2.1
+- vnf_id: vforward_vnf_3_1
+  vnf_name: vforward-vnf-3-1
+  vnf_vendor: everything-must-go
+  vnf_version: 0.3.1
+- vnf_id: vforward_vnf_4_1
+  vnf_name: vforward-vnf-4-1
+  vnf_vendor: everything-must-go
+  vnf_version: 0.4.1
+- vnf_id: vforward_vnf_5_1
+  vnf_name: vforward-vnf-5-1
+  vnf_vendor: everything-must-go
+  vnf_version: 0.5.1
+- vnf_id: vforward_vnf_6_1
+  vnf_name: vforward-vnf-6-1
+  vnf_vendor: everything-must-go
+  vnf_version: 0.6.1
+- vnf_id: vforward_vnf_7_1
+  vnf_name: vforward-vnf-7-1
+  vnf_vendor: everything-must-go
+  vnf_version: 0.7.1
+- vnf_id: vforward_vnf_8_1
+  vnf_name: vforward-vnf-8-1
+  vnf_vendor: everything-must-go
+  vnf_version: 0.8.1
+service_specific_managers:
+- description: placement SSM.
+  id: sonssmvforwardplacement1
+  image: tsoenen/vforward-placement
+  options:
+  - key: type
+    value: placement
+vendor: eu.sonata-nfv
+version: 0.8.1
+virtual_links:
+- connection_points_reference:
+  - mgmt
+  - vforward_vnf_1_1:mgmt
+  - vforward_vnf_2_1:mgmt
+  - vforward_vnf_3_1:mgmt
+  - vforward_vnf_4_1:mgmt
+  - vforward_vnf_5_1:mgmt
+  - vforward_vnf_6_1:mgmt
+  - vforward_vnf_7_1:mgmt
+  - vforward_vnf_8_1:mgmt
+  connectivity_type: E-LAN
+  id: mgmt
+- connection_points_reference:
+  - input
+  - vforward_vnf_1_1:input
+  connectivity_type: E-Line
+  id: link_1
+- connection_points_reference:
+  - vforward_vnf_1_1:output
+  - vforward_vnf_2_1:input
+  connectivity_type: E-Line
+  id: link_2
+- connection_points_reference:
+  - vforward_vnf_2_1:output
+  - vforward_vnf_3_1:input
+  connectivity_type: E-Line
+  id: link_3
+- connection_points_reference:
+  - vforward_vnf_3_1:output
+  - vforward_vnf_4_1:input
+  connectivity_type: E-Line
+  id: link_4
+- connection_points_reference:
+  - vforward_vnf_4_1:output
+  - vforward_vnf_5_1:input
+  connectivity_type: E-Line
+  id: link_5
+- connection_points_reference:
+  - vforward_vnf_5_1:output
+  - vforward_vnf_6_1:input
+  connectivity_type: E-Line
+  id: link_6
+- connection_points_reference:
+  - vforward_vnf_6_1:output
+  - vforward_vnf_7_1:input
+  connectivity_type: E-Line
+  id: link_7
+- connection_points_reference:
+  - vforward_vnf_7_1:output
+  - vforward_vnf_8_1:input
+  connectivity_type: E-Line
+  id: link_8
+- connection_points_reference:
+  - vforward_vnf_8_1:output
+  - output
+  connectivity_type: E-Line
+  id: link_9

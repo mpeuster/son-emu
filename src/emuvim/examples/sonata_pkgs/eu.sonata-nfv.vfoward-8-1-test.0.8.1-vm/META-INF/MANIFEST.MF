@@ -1,0 +1,102 @@
+artifact_dependencies:
+- credentials:
+    password: password
+    username: username
+  md5: 02236f2ae558018ed14b5222ef1bd9f1
+  name: vforward-vnf-6-1-vdu01-vm_image
+  url: http://files.sonata-nfv.eu/vForward_ovs.qcow2
+  vendor: everything-must-go
+  version: 0.6.1
+- credentials:
+    password: password
+    username: username
+  md5: 02236f2ae558018ed14b5222ef1bd9f1
+  name: vforward-vnf-3-1-vdu01-vm_image
+  url: http://files.sonata-nfv.eu/vForward_ovs.qcow2
+  vendor: everything-must-go
+  version: 0.3.1
+- credentials:
+    password: password
+    username: username
+  md5: 02236f2ae558018ed14b5222ef1bd9f1
+  name: vforward-vnf-8-1-vdu01-vm_image
+  url: http://files.sonata-nfv.eu/vForward_ovs.qcow2
+  vendor: everything-must-go
+  version: 0.8.1
+- credentials:
+    password: password
+    username: username
+  md5: 02236f2ae558018ed14b5222ef1bd9f1
+  name: vforward-vnf-2-1-vdu01-vm_image
+  url: http://files.sonata-nfv.eu/vForward_ovs.qcow2
+  vendor: everything-must-go
+  version: 0.2.1
+- credentials:
+    password: password
+    username: username
+  md5: 02236f2ae558018ed14b5222ef1bd9f1
+  name: vforward-vnf-7-1-vdu01-vm_image
+  url: http://files.sonata-nfv.eu/vForward_ovs.qcow2
+  vendor: everything-must-go
+  version: 0.7.1
+- credentials:
+    password: password
+    username: username
+  md5: 02236f2ae558018ed14b5222ef1bd9f1
+  name: vforward-vnf-1-1-vdu01-vm_image
+  url: http://files.sonata-nfv.eu/vForward_ovs.qcow2
+  vendor: everything-must-go
+  version: 0.1.1
+- credentials:
+    password: password
+    username: username
+  md5: 02236f2ae558018ed14b5222ef1bd9f1
+  name: vforward-vnf-5-1-vdu01-vm_image
+  url: http://files.sonata-nfv.eu/vForward_ovs.qcow2
+  vendor: everything-must-go
+  version: 0.5.1
+- credentials:
+    password: password
+    username: username
+  md5: 02236f2ae558018ed14b5222ef1bd9f1
+  name: vforward-vnf-4-1-vdu01-vm_image
+  url: http://files.sonata-nfv.eu/vForward_ovs.qcow2
+  vendor: everything-must-go
+  version: 0.4.1
+description: vFoward for 8 VNFs on 1 PoPs.
+descriptor_version: '1.0'
+entry_service_template: /service_descriptors/nsd.yml
+maintainer: Thomas Soenen
+name: vfoward-8-1
+package_content:
+- content-type: application/sonata.service_descriptor
+  md5: 60aa30afb9c87185d92a2d25a35a6818
+  name: /service_descriptors/nsd.yml
+- content-type: application/sonata.function_descriptor
+  md5: 66d80693069b9978f080ff792662a4df
+  name: /function_descriptors/vforward_vnf_6_1.yml
+- content-type: application/sonata.function_descriptor
+  md5: fb36dbe9dc34a90ff072470e7d288dd7
+  name: /function_descriptors/vforward_vnf_3_1.yml
+- content-type: application/sonata.function_descriptor
+  md5: ec544ee5a7cf636fcfefac638d8dc715
+  name: /function_descriptors/vforward_vnf_8_1.yml
+- content-type: application/sonata.function_descriptor
+  md5: 317a4e0741c04dc2d1b09fadcdb9894c
+  name: /function_descriptors/vforward_vnf_2_1.yml
+- content-type: application/sonata.function_descriptor
+  md5: 5dd6717b4423af4bdb864d4bc50e3195
+  name: /function_descriptors/vforward_vnf_7_1.yml
+- content-type: application/sonata.function_descriptor
+  md5: df6e4af425d25577d620fa827ade524c
+  name: /function_descriptors/vforward_vnf_1_1.yml
+- content-type: application/sonata.function_descriptor
+  md5: 6ab55fab9f83f5e7a89a7fcf6332f78f
+  name: /function_descriptors/vforward_vnf_5_1.yml
+- content-type: application/sonata.function_descriptor
+  md5: 78fb24c281dec8bb3a9c0f389cf04947
+  name: /function_descriptors/vforward_vnf_4_1.yml
+schema: https://raw.githubusercontent.com/sonata-nfv/son-schema/master/package-descriptor/pd-schema.yml
+sealed: false
+vendor: eu.sonata-nfv
+version: 0.8.1

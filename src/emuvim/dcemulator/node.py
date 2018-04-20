@@ -243,16 +243,25 @@ class Datacenter(object):
 
         env = properties
         properties['VNF_NAME'] = name
-        # create the container
-        d = self.net.addDocker(
-            "%s" % (name),
-            dimage=image,
-            dcmd=command,
-            datacenter=self,
-            flavor_name=flavor_name,
-            environment = env,
-            **params
-        )
+
+        if params.get("type") == "vm":
+            # VM prototype
+            d = self.net.addLibvirthost(
+                str(name),
+                disk_image=image,
+                datacenter=self
+            )
+        else:
+            # create a Docker container
+            d = self.net.addDocker(
+                "%s" % (name),
+                dimage=image,
+                dcmd=command,
+                datacenter=self,
+                flavor_name=flavor_name,
+                environment = env,
+                **params
+            )
 
 
 
@@ -276,7 +285,10 @@ class Datacenter(object):
             if nw.get("id") is not None:
                 nw["id"] = self._clean_ifname(nw["id"])
             # TODO we cannot use TCLink here (see: https://github.com/mpeuster/containernet/issues/3)
-            self.net.addLink(d, self.switch, params1=nw, cls=Link, intfName1=nw.get('id'))
+            try:
+                self.net.addLink(d, self.switch, params1=nw, cls=Link, intfName1=nw.get('id'))
+            except BaseException as e:
+                LOG.error(e)
         # do bookkeeping
         self.containers[name] = d
 
