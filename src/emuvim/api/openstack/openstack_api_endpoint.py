@@ -53,13 +53,13 @@ class OpenstackApiEndpoint():
         self.openstack_endpoints['keystone'] = KeystoneDummyApi(
             self.ip, self.port)
         self.openstack_endpoints['neutron'] = NeutronDummyApi(
-            self.ip, self.port + 4696, self.compute)
+            self.ip, self.port + 5000, self.compute)
         self.openstack_endpoints['nova'] = NovaDummyApi(
-            self.ip, self.port + 3774, self.compute)
+            self.ip, self.port + 10000, self.compute)
         self.openstack_endpoints['heat'] = HeatDummyApi(
-            self.ip, self.port + 3004, self.compute)
+            self.ip, self.port + 15000, self.compute)
         self.openstack_endpoints['glance'] = GlanceDummyApi(
-            self.ip, self.port + 4242, self.compute)
+            self.ip, self.port + 20000, self.compute)
 
         self.rest_threads = list()
         self.manage = OpenstackManage()
