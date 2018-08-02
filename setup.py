@@ -57,7 +57,9 @@ setup(name='emuvim',
           'ipaddress',
           'simplejson',
           'gevent',
-          'flake8'
+          'flake8',
+          'pandas',
+          'psutil'
       ],
       zip_safe=False,
       entry_points={
