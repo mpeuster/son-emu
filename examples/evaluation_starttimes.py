@@ -313,6 +313,44 @@ def run_scaling_experiments(args):
     return pd.DataFrame(result_dict_list)
 
 
+def run_scaling_experiments_log_large(args):
+    """
+    Run all startup timing experiments
+    """
+    # result collection
+    result_dict_list = list()
+    # setup parameter lists
+    args.topology_list = ["line", "star"]
+    # iterate over configs and execute
+    for topo in args.topology_list:
+        if topo == "mesh":
+           max_pops = 50#  50
+        else:
+           max_pops = 1024#  100
+        # remove to use cli parameter
+        args.n_pops = max_pops
+        args.pop_configs = [1, 2, 4, 8]#, 16, 32, 64, 128, 256, 512, 1024]
+        for pc in args.pop_configs:
+            for r_id in range(0, int(args.repetitions)):
+                args.topology = topo
+                args.n_pops = pc
+                args.r_id = r_id
+                print("Running experiment topo={} n_pops={} r_id={}".format(
+                    args.topology,
+                    args.n_pops,
+                    args.r_id
+                ))
+                if not args.no_run:
+                    try:
+                        result_dict_list.append(
+                            run_experiment(args, ScalingEvaluationTopology)
+                        )
+                    except:
+                        print("Error in experiment: {}".format(sys.exc_info()[1]))
+    # results to dataframe
+    return pd.DataFrame(result_dict_list)
+
+
 def run_service2_experiments(args):
     """
     Run all startup timing experiments
@@ -438,6 +476,13 @@ def main():
         print(df)
         df.to_pickle(args.result_path)
         print("Experiments done. Written to {}".format(args.result_path))
+    elif str(args.experiment).lower() == "scaling_log":
+        # scaling experiment 0-n PoPs line, star log scale up to 1024
+        df = run_scaling_experiments_log_large(args)
+        # write results to disk
+        print(df)
+        df.to_pickle(args.result_path)
+        print("Experiments done. Written to {}".format(args.result_path))        
     elif str(args.experiment).lower() == "zoo":
         args.zoo_path = "examples/topology_zoo/"
         df = run_zoo_experiments(args)
@@ -472,6 +517,7 @@ Examples:
     * sudo python examples/evaluation_starttimes.py --experiment none
     * sudo python examples/evaluation_starttimes.py --experiment scaling -r 5
     * sudo python examples/evaluation_starttimes.py --experiment scaling -r 5 --no-run
+    * sudo python examples/evaluation_starttimes.py --experiment scaling_log -r 5 --no-run
     * sudo python examples/evaluation_starttimes.py --experiment zoo -r 5 --no-run
     * sudo python examples/evaluation_starttimes.py --experiment service -r 5 --no-run
     * sudo python examples/evaluation_starttimes.py --experiment service2 -r 5 --no-run
