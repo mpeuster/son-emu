@@ -329,7 +329,7 @@ def run_scaling_experiments_log_large(args):
            max_pops = 1024#  100
         # remove to use cli parameter
         args.n_pops = max_pops
-        args.pop_configs = [1, 2, 4, 8]#, 16, 32, 64, 128, 256, 512, 1024]
+        args.pop_configs = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
         for pc in args.pop_configs:
             for r_id in range(0, int(args.repetitions)):
                 args.topology = topo
