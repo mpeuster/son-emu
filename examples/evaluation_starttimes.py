@@ -360,6 +360,8 @@ def run_scaling_experiments_log_random_large(args):
     result_dict_list = list()
     # list of k values to check
     args.topology_list = [0.5, 1.5]  # |E| = k*|V|
+    # conf_id
+    C_ID = 0
     # iterate over configs and execute
     for k in args.topology_list:
         args.pop_configs = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
@@ -373,13 +375,14 @@ def run_scaling_experiments_log_random_large(args):
                 args.vertices = pc
                 args.edges = int(k * args.vertices)
                 args.r_id = r_id
-                args.config_id = 0
+                args.config_id = C_ID
                 args.topology = k
-                print("Running experiment vertices={} edges={} k={} r_id={}".format(
+                print("Running experiment vertices={} edges={} k={} r_id={} c_id={}".format(
                     args.vertices,
                     args.edges,
                     args.topology,
-                    args.r_id
+                    args.r_id,
+                    args.config_id
                 ))
                 if not args.no_run:
                     try:
@@ -388,6 +391,7 @@ def run_scaling_experiments_log_random_large(args):
                         )
                     except:
                         print("Error in experiment: {}".format(sys.exc_info()[1]))
+        C_ID += 1
     # results to dataframe
     return pd.DataFrame(result_dict_list)
 

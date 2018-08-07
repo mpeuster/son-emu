@@ -74,7 +74,7 @@ class NetworkXTopology(object):
         else:
             # use graph in argument G (used for random graph experiments)
             self.G = G
-            self.G_name = "G_V{}_E{}".format(len(G.nodes()), len(G.edges()))
+            self.G_name = "G(k={})".format(args.topology)
         self.r_id =  args.r_id
         self.net = None
         self.pops = list()
