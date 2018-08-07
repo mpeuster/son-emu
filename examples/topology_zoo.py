@@ -62,13 +62,19 @@ SPEED_OF_LIGHT = 299792458  # meter per second
 PROPAGATION_FACTOR = 0.77  # https://en.wikipedia.org/wiki/Propagation_delay
 
 
-class TopologyZooTopology(object):
+class NetworkXTopology(object):
 
-    def __init__(self, args, enable_rest_api=True):
+    def __init__(self, args, enable_rest_api=True, G=None):
         self.uuid = uuid.uuid4()
         self.args = args
-        self.G = self._load_graphml(args.graph_file)
-        self.G_name = os.path.basename(args.graph_file).replace(".graphml", "")
+        if G is None:
+            # load from topology file
+            self.G = self._load_graphml(args.graph_file)
+            self.G_name = os.path.basename(args.graph_file).replace(".graphml", "")
+        else:
+            # use graph in argument G (used for random graph experiments)
+            self.G = G
+            self.G_name = "G_V{}_E{}".format(len(G.nodes()), len(G.edges()))
         self.r_id =  args.r_id
         self.net = None
         self.pops = list()
@@ -263,6 +269,10 @@ class TopologyZooTopology(object):
         for a in self.osapis:
             a.stop()
         self.net.stop()
+
+
+class TopologyZooTopology(NetworkXTopology):
+    pass
 
 
 def parse_args():

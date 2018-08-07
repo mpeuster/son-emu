@@ -23,13 +23,14 @@ import logging
 import argparse
 import networkx as nx
 import numpy as np
+from topology_zoo import NetworkXTopology
 
 logging.basicConfig(level=logging.DEBUG)
 # setLogLevel('info')  # set Mininet loglevel
 LOG = logging.getLogger("rnd_topo")
 
 
-class RandomGraphTopology(object):
+class RandomGraphTopology(NetworkXTopology):
     """
     NetworkX Random Graph Generator
     https://networkx.github.io/documentation/stable/reference/
@@ -38,13 +39,12 @@ class RandomGraphTopology(object):
 
     def __init__(self, args):
         self.args = args
-        LOG.info("Initialized RandomGraphTopology: {}"
+        LOG.info("Initializing RandomGraphTopology: {}"
                  .format(self.args))
-        all_fkt = list()
         self.G = self.generate_G()
+        super(RandomGraphTopology, self).__init__(args, enable_rest_api=True, G=self.G)
         
-
-
+     
     def generate_G(self):
         """
         Generate random graph with args.vertices and args. edges.
@@ -83,10 +83,11 @@ def parse_args():
 def main():
     args = parse_args()
     args.r_id = 0
+    args.config_id = 0
     t = RandomGraphTopology(args)
-    # t.cli()
-    # t.stop_topology()
-    #print(t.results)
+    t.cli()
+    t.stop_topology()
+    print(t.results)
 
 if __name__ == '__main__':
     main()

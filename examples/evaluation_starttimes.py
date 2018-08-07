@@ -39,6 +39,7 @@ from emuvim.api.rest.rest_api_endpoint import RestApiEndpoint
 from emuvim.api.openstack.openstack_api_endpoint import OpenstackApiEndpoint
 from processify import processify
 from topology_zoo import TopologyZooTopology
+from random_topology import RandomGraphTopology
 
 logging.basicConfig(level=logging.INFO)
 setLogLevel('info')  # set Mininet loglevel
@@ -351,6 +352,45 @@ def run_scaling_experiments_log_large(args):
     return pd.DataFrame(result_dict_list)
 
 
+def run_scaling_experiments_log_random_large(args):
+    """
+    Run all startup timing experiments
+    """
+    # result collection
+    result_dict_list = list()
+    # list of k values to check
+    args.topology_list = [0.5, 1.5]  # |E| = k*|V|
+    # iterate over configs and execute
+    for k in args.topology_list:
+        args.pop_configs = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
+        # args.pop_configs = [5, 8]
+        max_pops = max(args.pop_configs)
+        # remove to use cli parameter
+        args.n_pops = max_pops
+        for pc in args.pop_configs:
+            for r_id in range(0, int(args.repetitions)):
+                args.n_pops = pc
+                args.vertices = pc
+                args.edges = int(k * args.vertices)
+                args.r_id = r_id
+                args.config_id = 0
+                args.topology = k
+                print("Running experiment vertices={} edges={} k={} r_id={}".format(
+                    args.vertices,
+                    args.edges,
+                    args.topology,
+                    args.r_id
+                ))
+                if not args.no_run:
+                    try:
+                        result_dict_list.append(
+                            run_experiment(args, RandomGraphTopology)
+                        )
+                    except:
+                        print("Error in experiment: {}".format(sys.exc_info()[1]))
+    # results to dataframe
+    return pd.DataFrame(result_dict_list)
+
 def run_service2_experiments(args):
     """
     Run all startup timing experiments
@@ -482,7 +522,14 @@ def main():
         # write results to disk
         print(df)
         df.to_pickle(args.result_path)
-        print("Experiments done. Written to {}".format(args.result_path))        
+        print("Experiments done. Written to {}".format(args.result_path))
+    elif str(args.experiment).lower() == "scaling_log_random":
+        # scaling experiment 0-n PoPs random topos log scale up to 1024
+        df = run_scaling_experiments_log_random_large(args)
+        # write results to disk
+        print(df)
+        df.to_pickle(args.result_path)
+        print("Experiments done. Written to {}".format(args.result_path))
     elif str(args.experiment).lower() == "zoo":
         args.zoo_path = "examples/topology_zoo/"
         df = run_zoo_experiments(args)
