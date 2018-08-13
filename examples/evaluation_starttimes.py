@@ -402,14 +402,7 @@ def run_service2_experiments(args):
     # result collection
     result_dict_list = list()
     # iterate over configs and execute
-    for topo in args.topology_list:
-        if topo == "mesh":
-           max_pops = 50#  50
-        else:
-           max_pops = 50#  100
-        # remove to use cli parameter
-        args.n_pops = max_pops
-        args.pop_configs = [args.n_pops] # fixed number of pops
+    for topo in args.topology_list:        
         #args.pop_configs += list(range(5, int(args.n_pops) + 1, STEP_SIZE_POPS))
         for pc in args.pop_configs:
             for s in args.service_sizes:  # start s VNFs
@@ -549,10 +542,12 @@ def main():
         print(df)
         df.to_pickle(args.result_path)
     elif str(args.experiment).lower() == "service2":
-        args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256]
-        #args.service_sizes = [1, 4]
-        args.topology_list = ["line", "star", "mesh"]
-        #args.topology_list = ["line"]
+        #args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+        args.service_sizes = [512]
+        #args.topology_list = ["line", "star"]
+        args.topology_list = ["line"]
+        args.n_pops = 128
+        args.pop_configs = [8] # fixed number of pops
         df = run_service2_experiments(args)
         # write results to disk
         print(df)
