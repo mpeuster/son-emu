@@ -395,21 +395,26 @@ def run_scaling_experiments_log_random_large(args):
     # results to dataframe
     return pd.DataFrame(result_dict_list)
 
-def run_service2_experiments(args):
+def run_service2_experiments(args, tcls=ScalingEvaluationTopology):
     """
     Run all startup timing experiments
     """
     # result collection
     result_dict_list = list()
+    C_ID = 0
     # iterate over configs and execute
     for topo in args.topology_list:        
         #args.pop_configs += list(range(5, int(args.n_pops) + 1, STEP_SIZE_POPS))
         for pc in args.pop_configs:
             for s in args.service_sizes:  # start s VNFs
+                args.config_id = C_ID
                 for r_id in range(0, int(args.repetitions)):
                     args.topology = topo
                     args.n_pops = pc
                     args.r_id = r_id
+                    if tcls==RandomGraphTopology:
+                        args.vertices = args.n_pops
+                        args.edges = int(args.topology * args.vertices)
                     print("Running experiment topo={} n_pops={} service_size={} r_id={}".format(
                         args.topology,
                         args.n_pops,
@@ -419,10 +424,11 @@ def run_service2_experiments(args):
                     if not args.no_run:
                         try:
                             result_dict_list.append(
-                                run_experiment(args, ScalingEvaluationTopology, service_size=s)
+                                run_experiment(args, tcls, service_size=s)
                             )
                         except:
                             print("Error in experiment: {}".format(sys.exc_info()[1]))
+                C_ID += 1
     # results to dataframe
     return pd.DataFrame(result_dict_list)
 
@@ -546,11 +552,12 @@ def main():
         Service start line/star
         """
         args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
-        #args.service_sizes = [512]
+        #args.service_sizes = [1]
         args.topology_list = ["line", "star"]
         #args.topology_list = ["line"]
         args.n_pops = 128
-        args.pop_configs = [8, 128] # fixed number of pops
+        args.pop_configs = [8, 128]
+        #args.pop_configs = [8]
         df = run_service2_experiments(args)
         # write results to disk
         print(df)
@@ -559,14 +566,14 @@ def main():
         """
         Service start rdm05, rdm15
         """
-        # TODO implement this one
         args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
-        #args.service_sizes = [512]
-        args.topology_list = ["line", "star"]
-        #args.topology_list = ["line"]
+        #args.service_sizes = [1]
+        args.topology_list = [0.5, 1.5]
+        #args.topology_list = [0.5]
         args.n_pops = 128
-        args.pop_configs = [8, 128] # fixed number of pops
-        df = run_service2_experiments(args)
+        args.pop_configs = [8, 128]
+        #args.pop_configs = [8]
+        df = run_service2_experiments(args, tcls=RandomGraphTopology)
         # write results to disk
         print(df)
         df.to_pickle(args.result_path)
