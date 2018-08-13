@@ -542,12 +542,30 @@ def main():
         print(df)
         df.to_pickle(args.result_path)
     elif str(args.experiment).lower() == "service2":
-        #args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
-        args.service_sizes = [512]
-        #args.topology_list = ["line", "star"]
-        args.topology_list = ["line"]
+        """
+        Service start line/star
+        """
+        args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+        #args.service_sizes = [512]
+        args.topology_list = ["line", "star"]
+        #args.topology_list = ["line"]
         args.n_pops = 128
-        args.pop_configs = [8] # fixed number of pops
+        args.pop_configs = [8, 128] # fixed number of pops
+        df = run_service2_experiments(args)
+        # write results to disk
+        print(df)
+        df.to_pickle(args.result_path)
+    elif str(args.experiment).lower() == "service3":
+        """
+        Service start rdm05, rdm15
+        """
+        # TODO implement this one
+        args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+        #args.service_sizes = [512]
+        args.topology_list = ["line", "star"]
+        #args.topology_list = ["line"]
+        args.n_pops = 128
+        args.pop_configs = [8, 128] # fixed number of pops
         df = run_service2_experiments(args)
         # write results to disk
         print(df)
