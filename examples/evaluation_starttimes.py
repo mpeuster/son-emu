@@ -551,7 +551,7 @@ def main():
         """
         Service start line/star
         """
-        args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+        args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256]
         #args.service_sizes = [1]
         args.topology_list = ["line", "star"]
         #args.topology_list = ["line"]
@@ -566,7 +566,7 @@ def main():
         """
         Service start rdm05, rdm15
         """
-        args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+        args.service_sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256]
         #args.service_sizes = [1]
         args.topology_list = [0.5, 1.5]
         #args.topology_list = [0.5]
