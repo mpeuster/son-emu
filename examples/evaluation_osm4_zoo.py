@@ -143,9 +143,7 @@ class OsmZooTopology(TopologyZooTopology):
             exit(1)
 
     def _osm_onboard_nsd(self, path):
-        cmd = "osm --hostname {} --ro-hostname {} upload-package {}".format(
-            self.ip_so,
-            self.ip_ro,
+        cmd = "osm nsd-create {}".format(
             path
         )
         print("CALL: {}".format(cmd))
@@ -157,9 +155,7 @@ class OsmZooTopology(TopologyZooTopology):
             print("ERROR")
 
     def _osm_onboard_vnfd(self, path):
-        cmd = "osm --hostname {} --ro-hostname {} upload-package {}".format(
-            self.ip_so,
-            self.ip_ro,
+        cmd = "osm vnfd-create {}".format(
             path
         )
         print("CALL: {}".format(cmd))
@@ -172,9 +168,7 @@ class OsmZooTopology(TopologyZooTopology):
             exit(1)
 
     def _osm_delete_nsd(self, name):
-        cmd = "osm --hostname {} --ro-hostname {} nsd-delete {}".format(
-            self.ip_so,
-            self.ip_ro,
+        cmd = "osm nsd-delete {}".format(
             name
         )
         print("CALL: {}".format(cmd))
@@ -187,9 +181,7 @@ class OsmZooTopology(TopologyZooTopology):
             exit(1)
 
     def _osm_delete_vnfd(self, name):
-        cmd = "osm --hostname {} --ro-hostname {} vnfd-delete {}".format(
-            self.ip_so,
-            self.ip_ro,
+        cmd = "osm vnfd-delete {}".format(
             name
         )
         print("CALL: {}".format(cmd))
@@ -202,9 +194,7 @@ class OsmZooTopology(TopologyZooTopology):
             exit(1)
 
     def _osm_create_ns(self, name, iname, port, wait=False):
-        cmd = "osm --hostname {} --ro-hostname {} ns-create --nsd_name {} --ns_name {} --vim_account pop{}".format(
-            self.ip_so,
-            self.ip_ro,
+        cmd = "osm ns-create --nsd_name {} --ns_name {} --vim_account pop{}".format(
             name,
             iname,
             port
@@ -223,10 +213,7 @@ class OsmZooTopology(TopologyZooTopology):
         self.running_services += 1
 
     def _osm_ns_list(self):
-        cmd = "osm --hostname {} --ro-hostname {} ns-list".format(
-            self.ip_so,
-            self.ip_ro
-        )
+        cmd = "osm ns-list"
         print("CALL: {}".format(cmd))
         t_start = time.time()
         r = subprocess.check_output(cmd, shell=True)
@@ -235,9 +222,7 @@ class OsmZooTopology(TopologyZooTopology):
         return r
 
     def _osm_ns_show(self, name):
-        cmd = "osm --hostname {} --ro-hostname {} ns-show {}".format(
-            self.ip_so,
-            self.ip_ro,
+        cmd = "osm ns-show {}".format(
             name
         )
         print("CALL: {}".format(cmd))
@@ -283,9 +268,7 @@ class OsmZooTopology(TopologyZooTopology):
             c += 1            
 
     def _osm_delete_ns(self, iname):
-        cmd = "osm --hostname {} --ro-hostname {} ns-delete {}".format(
-            self.ip_so,
-            self.ip_ro,
+        cmd = "osm ns-delete {}".format(
             iname
         )
         print("CALL: {}".format(cmd))
@@ -327,14 +310,15 @@ class OsmZooTopology(TopologyZooTopology):
             self._osm_show_vim(p)
 
     def osm_onboard_service(self):
-        self._osm_onboard_vnfd("examples/osm_pkgs/pong.tar.gz")
-        self._osm_onboard_vnfd("examples/osm_pkgs/ping.tar.gz")
-        self._osm_onboard_nsd("examples/osm_pkgs/pingpong_nsd.tar.gz")
+        self._osm_onboard_vnfd("examples/vnfs/pong.tar.gz")
+        self._osm_onboard_vnfd("examples/vnfs/ping.tar.gz")
+        self._osm_onboard_nsd("examples/services/pingpong_nsd.tar.gz")
 
     def osm_delete_service(self):
         self._osm_delete_nsd("pingpong")
         self._osm_delete_vnfd("ping")
         self._osm_delete_vnfd("pong")
+        time.sleep(4)
 
     def osm_instantiate_service(self, iname, port):
         """
@@ -346,6 +330,7 @@ class OsmZooTopology(TopologyZooTopology):
 
     def osm_terminate_service(self, iname):
         self._osm_delete_ns(iname)
+        time.sleep(4)
 
 
 
@@ -565,13 +550,13 @@ def main():
         t = OsmZooTopology(args)
         print("Keystone endpoints: {}".format(t.get_keystone_endpoints()))
         t.osm_create_vims()
-        #t.osm_show_vims()
+        t.osm_show_vims()
         t.osm_list_vims()
-        #t.osm_onboard_service()
-        #t.osm_instantiate_service("myinst1", 6001)
+        t.osm_onboard_service()
+        t.osm_instantiate_service("myinst1", 6001)
         t.cli()
-        #t.osm_terminate_service("myinst1")
-        #t.osm_delete_service()
+        t.osm_terminate_service("myinst1")
+        t.osm_delete_service()
         t.osm_delete_vims()
         t.stop_topology()
         print(t.results)
