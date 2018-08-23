@@ -2,6 +2,9 @@
 #rm -r service_results
 #rm -r osm_service_results
 
+set -x
+set -e
+
 mkdir -p service_results
 mkdir -p osm_service_results
 
@@ -11,45 +14,46 @@ sleep 10
 sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t UsCarrier.graphml --result-path service_results/UsCarrier_r1.pkl
 sleep 10
 
-#./re_install_osm.sh
-#sleep 10
-#sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t UsCarrier.graphml --result-path service_results/UsCarrier_r2.pkl
-#sleep 10
+./re_install_osm.sh
+sleep 10
+sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t UsCarrier.graphml --result-path service_results/UsCarrier_r2.pkl
+sleep 10
 
 ./re_install_osm.sh
 sleep 10
 sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t UsCarrier.graphml --result-path service_results/UsCarrier_r3.pkl
 sleep 10
 
-#./re_install_osm.sh
-#sleep 10
-#sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t UsCarrier.graphml --result-path service_results/UsCarrier_r4.pkl
-#sleep 10
-#./re_install_osm.sh
-#sleep 10
-#sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t UsCarrier.graphml --result-path service_results/UsCarrier_r5.pkl
-#sleep 10
+./re_install_osm.sh
+sleep 10
+sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t UsCarrier.graphml --result-path service_results/UsCarrier_r4.pkl
+sleep 10
 
-#./re_install_osm.sh
-#sleep 10
-#sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r1.pkl
-#sleep 10
-#./re_install_osm.sh
-#sleep 10
-#sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r2.pkl
-#sleep 10
-#./re_install_osm.sh
-#sleep 10
-#sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r3.pkl
-#sleep 10
-#./re_install_osm.sh
-#sleep 10
-#sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r4.pkl
-#sleep 10
-#./re_install_osm.sh
-#sleep 10
-#sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r5.pkl
-#sleep 10
+./re_install_osm.sh
+sleep 10
+sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t UsCarrier.graphml --result-path service_results/UsCarrier_r5.pkl
+sleep 10
+
+./re_install_osm.sh
+sleep 10
+sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r1.pkl
+sleep 10
+./re_install_osm.sh
+sleep 10
+sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r2.pkl
+sleep 10
+./re_install_osm.sh
+sleep 10
+sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r3.pkl
+sleep 10
+./re_install_osm.sh
+sleep 10
+sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r4.pkl
+sleep 10
+./re_install_osm.sh
+sleep 10
+sudo python examples/evaluation_osm_zoo.py --experiment service -r 1 -t DeutscheTelekom.graphml --result-path service_results/DeutscheTelekom_r5.pkl
+sleep 10
 
 ./re_install_osm.sh
 sleep 10
