@@ -237,11 +237,11 @@ class KeystoneGetToken(Resource):
             ret['access']['serviceCatalog'] = [{
                 "endpoints": [
                     {
-                        "adminURL": "http://%s:%s/v2.1/%s" % (get_host(request), self.api.port + 3774, user['id']),
+                        "adminURL": "http://%s:%s/v2.1/%s" % (get_host(request), self.api.port + 10000, user['id']),
                         "region": "RegionOne",
-                        "internalURL": "http://%s:%s/v2.1/%s" % (get_host(request), self.api.port + 3774, user['id']),
+                        "internalURL": "http://%s:%s/v2.1/%s" % (get_host(request), self.api.port + 10000, user['id']),
                         "id": "2dad48f09e2a447a9bf852bcd93548ef",
-                        "publicURL": "http://%s:%s/v2.1/%s" % (get_host(request), self.api.port + 3774, user['id'])
+                        "publicURL": "http://%s:%s/v2.1/%s" % (get_host(request), self.api.port + 10000, user['id'])
                     }
                 ],
                 "endpoints_links": [],
@@ -265,11 +265,11 @@ class KeystoneGetToken(Resource):
                 {
                     "endpoints": [
                         {
-                            "adminURL": "http://%s:%s" % (get_host(request), self.api.port + 4696),
+                            "adminURL": "http://%s:%s" % (get_host(request), self.api.port + 5000),
                             "region": "RegionOne",
-                            "internalURL": "http://%s:%s" % (get_host(request), self.api.port + 4696),
+                            "internalURL": "http://%s:%s" % (get_host(request), self.api.port + 5000),
                             "id": "2dad48f09e2a447a9bf852bcd93548cf",
-                            "publicURL": "http://%s:%s" % (get_host(request), self.api.port + 4696)
+                            "publicURL": "http://%s:%s" % (get_host(request), self.api.port + 5000)
                         }
                     ],
                     "endpoints_links": [],
@@ -279,11 +279,11 @@ class KeystoneGetToken(Resource):
                 {
                     "endpoints": [
                         {
-                            "adminURL": "http://%s:%s" % (get_host(request), self.api.port + 4242),
+                            "adminURL": "http://%s:%s" % (get_host(request), self.api.port + 20000),
                             "region": "RegionOne",
-                            "internalURL": "http://%s:%s" % (get_host(request), self.api.port + 4242),
+                            "internalURL": "http://%s:%s" % (get_host(request), self.api.port + 20000),
                             "id": "2dad48f09e2a447a9bf852bcd93548cf",
-                            "publicURL": "http://%s:%s" % (get_host(request), self.api.port + 4242)
+                            "publicURL": "http://%s:%s" % (get_host(request), self.api.port + 20000)
                         }
                     ],
                     "endpoints_links": [],
@@ -293,11 +293,11 @@ class KeystoneGetToken(Resource):
                 {
                     "endpoints": [
                         {
-                            "adminURL": "http://%s:%s/v1/%s" % (get_host(request), self.api.port + 3004, user['id']),
+                            "adminURL": "http://%s:%s/v1/%s" % (get_host(request), self.api.port + 15000, user['id']),
                             "region": "RegionOne",
-                            "internalURL": "http://%s:%s/v1/%s" % (get_host(request), self.api.port + 3004, user['id']),
+                            "internalURL": "http://%s:%s/v1/%s" % (get_host(request), self.api.port + 15000, user['id']),
                             "id": "2dad48f09e2a447a9bf852bcd93548bf",
-                            "publicURL": "http://%s:%s/v1/%s" % (get_host(request), self.api.port + 3004, user['id'])
+                            "publicURL": "http://%s:%s/v1/%s" % (get_host(request), self.api.port + 15000, user['id'])
                         }
                     ],
                     "endpoints_links": [],
@@ -386,7 +386,7 @@ class KeystoneGetTokenv3(Resource):
             token['catalog'] = [{
                 "endpoints": [
                     {
-                        "url": "http://%s:%s/v2.1/%s" % (get_host(request), self.api.port + 3774, user['id']),
+                        "url": "http://%s:%s/v2.1/%s" % (get_host(request), self.api.port + 10000, user['id']),
                         "region": "RegionOne",
                         "interface": "public",
                         "id": "2dad48f09e2a447a9bf852bcd93548ef"
@@ -412,7 +412,7 @@ class KeystoneGetTokenv3(Resource):
                 {
                     "endpoints": [
                         {
-                            "url": "http://%s:%s" % (get_host(request), self.api.port + 4696),
+                            "url": "http://%s:%s" % (get_host(request), self.api.port + 5000),
                             "region": "RegionOne",
                             "interface": "public",
                             "id": "2dad48f09e2a447a9bf852bcd93548cf"
@@ -425,7 +425,7 @@ class KeystoneGetTokenv3(Resource):
                 {
                     "endpoints": [
                         {
-                            "url": "http://%s:%s" % (get_host(request), self.api.port + 4242),
+                            "url": "http://%s:%s" % (get_host(request), self.api.port + 20000),
                             "region": "RegionOne",
                             "interface": "public",
                             "id": "2dad48f09e2a447a9bf852bcd93548cf"
@@ -438,7 +438,7 @@ class KeystoneGetTokenv3(Resource):
                 {
                     "endpoints": [
                         {
-                            "url": "http://%s:%s/v1/%s" % (get_host(request), self.api.port + 3004, user['id']),
+                            "url": "http://%s:%s/v1/%s" % (get_host(request), self.api.port + 15000, user['id']),
                             "region": "RegionOne",
                             "interface": "public",
                             "id": "2dad48f09e2a447a9bf852bcd93548bf"
