@@ -129,7 +129,7 @@ class OsmZooTopology(TopologyZooTopology):
                     res.append(int(p.strip("po")))
         return res
 
-    def _osm_show_vim(self, port):
+    def _osm_show_vim(self, port, stop_on_error=True):
         cmd = "osm vim-show pop{}".format(
             port
         )
@@ -139,8 +139,10 @@ class OsmZooTopology(TopologyZooTopology):
         self._add_result("vim-show", abs(time.time() - t_start))
         print("RETURN: {}".format(r))
         if r != 0:
-            print("ERROR")
-            exit(1)
+            if stop_on_error:
+                print("ERROR")
+                exit(1)
+        return r
 
     def _osm_onboard_nsd(self, path):
         cmd = "osm nsd-create {}".format(
@@ -265,7 +267,21 @@ class OsmZooTopology(TopologyZooTopology):
             if s:
                 break
             time.sleep(.5)
-            c += 1            
+            c += 1
+
+    def _osm_wait_for_delete_vim(self, port, timeout=60):
+        """
+        Poll vim-show until gone.
+        """
+        c = 0
+        while(c < timeout):
+            s = self._osm_show_vim(port, stop_on_error=False)
+            print("Waiting for VIM '{}' deletion.Status: {} ({}/{})"
+                  .format(port, s, c, timeout))
+            if s > 0:
+                break
+            time.sleep(.5)
+            c += 1
 
     def _osm_delete_ns(self, iname):
         cmd = "osm ns-delete {}".format(
@@ -295,6 +311,7 @@ class OsmZooTopology(TopologyZooTopology):
         """
         for p in self.get_keystone_endpoints():
             self._osm_delete_vim(p)
+            self._osm_wait_for_delete_vim(p)
 
     def osm_list_vims(self):
         """
@@ -407,16 +424,16 @@ def run_setup_experiment(args, topo_cls):
     """
     t = topo_cls(args)
     print("Keystone endpoints: {}".format(t.get_keystone_endpoints()))
-    time.sleep(2)
+    time.sleep(5)
     t.timer_start("time_total_vim_attach")
     t.osm_create_vims()
     t.timer_stop("time_total_vim_attach")
     t.osm_show_vims()
-    time.sleep(2)
+    time.sleep(5)
     t.osm_delete_vims()
-    time.sleep(2)
+    time.sleep(5)
     t.stop_topology()
-    time.sleep(2)
+    time.sleep(5)
     return t.results.copy(), t.osm_results
 
 @processify
@@ -552,11 +569,11 @@ def main():
         t.osm_create_vims()
         t.osm_show_vims()
         t.osm_list_vims()
-        t.osm_onboard_service()
-        t.osm_instantiate_service("myinst1", 6001)
+        #t.osm_onboard_service()
+        #t.osm_instantiate_service("myinst1", 6001)
         t.cli()
-        t.osm_terminate_service("myinst1")
-        t.osm_delete_service()
+        #t.osm_terminate_service("myinst1")
+        #t.osm_delete_service()
         t.osm_delete_vims()
         t.stop_topology()
         print(t.results)
