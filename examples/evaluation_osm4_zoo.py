@@ -223,15 +223,21 @@ class OsmZooTopology(TopologyZooTopology):
         print("RETURN:\n{}".format(r))
         return r
 
-    def _osm_ns_show(self, name):
+    def _osm_ns_show(self, name, stop_on_error=False, no_output=False):
         cmd = "osm ns-show {}".format(
             name
         )
         print("CALL: {}".format(cmd))
         t_start = time.time()
-        r = subprocess.check_output(cmd, shell=True)
+        if no_output:
+            r = subprocess.call(cmd, shell=True)
+        else:
+            r = subprocess.check_output(cmd, shell=True)
         self._add_result("nsd-show", abs(time.time() - t_start))
-        #print("RETURN:\n{}".format(r))
+        if no_output:
+            if stop_on_error:
+                print("ERROR")
+                exit(1)
         return r
 
     def _osm_parse_ns_status(self, output):
@@ -276,21 +282,37 @@ class OsmZooTopology(TopologyZooTopology):
         c = 0
         while(c < timeout):
             s = self._osm_show_vim(port, stop_on_error=False)
-            print("Waiting for VIM '{}' deletion.Status: {} ({}/{})"
+            print("Waiting for VIM '{}' deletion. Status: {} ({}/{})"
                   .format(port, s, c, timeout))
             if s > 0:
                 break
             time.sleep(.5)
             c += 1
 
-    def _osm_delete_ns(self, iname):
+    def _osm_wait_for_delete_ns(self, iname, timeout=60):
+        """
+        Poll ns-show until gone.
+        """
+        c = 0
+        while(c < timeout):
+            s = self._osm_ns_show(iname, stop_on_error=False, no_output=True)
+            print("Waiting for NS '{}' deletion. Status: {} ({}/{})"
+                  .format(iname, s, c, timeout))
+            if s > 0:
+                break
+            time.sleep(.5)
+            c += 1
+
+    def _osm_delete_ns(self, iname, wait = True):
         cmd = "osm ns-delete {}".format(
             iname
         )
         print("CALL: {}".format(cmd))
         t_start = time.time()
         r = subprocess.call(cmd, shell=True)
-        self._add_result("ns-delete", abs(time.time() - t_start))
+        self._osm_wait_for_delete_ns(iname)
+        if wait:
+            self._add_result("ns-delete", abs(time.time() - t_start))
         print("RETURN: {}".format(r))
         if r != 0:
             print("ERROR")
@@ -574,11 +596,11 @@ def main():
         t.osm_create_vims()
         t.osm_show_vims()
         t.osm_list_vims()
-        #t.osm_onboard_service()
-        #t.osm_instantiate_service("myinst1", 6001)
+        t.osm_onboard_service()
+        t.osm_instantiate_service("myinst1", 6001)
         t.cli()
-        #t.osm_terminate_service("myinst1")
-        #t.osm_delete_service()
+        t.osm_terminate_service("myinst1")
+        t.osm_delete_service()
         t.osm_delete_vims()
         time.sleep(1)
         t.osm_delete_vims()
