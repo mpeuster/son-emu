@@ -309,7 +309,7 @@ class OsmZooTopology(TopologyZooTopology):
         """
         Removes the emulated VIMs from the local OSM installation.
         """
-        for p in self.get_keystone_endpoints():
+        for p in self.osm_list_vims():
             self._osm_delete_vim(p)
             self._osm_wait_for_delete_vim(p)
 
@@ -429,6 +429,11 @@ def run_setup_experiment(args, topo_cls):
     t.osm_create_vims()
     t.timer_stop("time_total_vim_attach")
     t.osm_show_vims()
+    time.sleep(5)
+    # try to delete 3 times to be safe
+    t.osm_delete_vims()
+    time.sleep(5)
+    t.osm_delete_vims()
     time.sleep(5)
     t.osm_delete_vims()
     time.sleep(5)
@@ -574,6 +579,8 @@ def main():
         t.cli()
         #t.osm_terminate_service("myinst1")
         #t.osm_delete_service()
+        t.osm_delete_vims()
+        time.sleep(1)
         t.osm_delete_vims()
         t.stop_topology()
         print(t.results)
