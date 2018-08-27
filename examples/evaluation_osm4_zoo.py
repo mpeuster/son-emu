@@ -43,16 +43,16 @@ from topology_zoo import TopologyZooTopology
 
 logging.basicConfig(level=logging.DEBUG)
 setLogLevel('info')  # set Mininet loglevel
-logging.getLogger('werkzeug').setLevel(logging.DEBUG)
-logging.getLogger('api.openstack.base').setLevel(logging.DEBUG)
-logging.getLogger('api.openstack.compute').setLevel(logging.DEBUG)
-logging.getLogger('api.openstack.keystone').setLevel(logging.DEBUG)
-logging.getLogger('api.openstack.nova').setLevel(logging.DEBUG)
-logging.getLogger('api.openstack.neutron').setLevel(logging.DEBUG)
-logging.getLogger('api.openstack.heat').setLevel(logging.DEBUG)
-logging.getLogger('api.openstack.heat.parser').setLevel(logging.DEBUG)
-logging.getLogger('api.openstack.glance').setLevel(logging.DEBUG)
-logging.getLogger('api.openstack.helper').setLevel(logging.DEBUG)
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
+logging.getLogger('api.openstack.base').setLevel(logging.ERROR)
+logging.getLogger('api.openstack.compute').setLevel(logging.ERROR)
+logging.getLogger('api.openstack.keystone').setLevel(logging.ERROR)
+logging.getLogger('api.openstack.nova').setLevel(logging.ERROR)
+logging.getLogger('api.openstack.neutron').setLevel(logging.ERROR)
+logging.getLogger('api.openstack.heat').setLevel(logging.ERROR)
+logging.getLogger('api.openstack.heat.parser').setLevel(logging.ERROR)
+logging.getLogger('api.openstack.glance').setLevel(logging.ERROR)
+logging.getLogger('api.openstack.helper').setLevel(logging.ERROR)
 
 
 class OsmZooTopology(TopologyZooTopology):
@@ -98,10 +98,12 @@ class OsmZooTopology(TopologyZooTopology):
             return
         self.vim_port_list.append(port)
 
-    def _osm_delete_vim(self, port):
+    def _osm_delete_vim(self, port, force=False):
         cmd = "osm vim-delete pop{}".format(
             port
         )
+        if force:
+            cmd = cmd + " --force"
         print("CALL: {}".format(cmd))
         t_start = time.time()
         r = subprocess.call(cmd, shell=True)
@@ -169,29 +171,33 @@ class OsmZooTopology(TopologyZooTopology):
             print("ERROR")
             exit(1)
 
-    def _osm_delete_nsd(self, name):
+    def _osm_delete_nsd(self, name, force=False):
         cmd = "osm nsd-delete {}".format(
             name
         )
+        if force:
+            cmd = cmd + " --force"
         print("CALL: {}".format(cmd))
         t_start = time.time()
         r = subprocess.call(cmd, shell=True)
         self._add_result("nsd-delete", abs(time.time() - t_start))
         print("RETURN: {}".format(r))
-        if r != 0:
+        if r != 0 and not force:
             print("ERROR")
             exit(1)
 
-    def _osm_delete_vnfd(self, name):
+    def _osm_delete_vnfd(self, name, force=False):
         cmd = "osm vnfd-delete {}".format(
             name
         )
+        if force:
+            cmd = cmd + " --force"
         print("CALL: {}".format(cmd))
         t_start = time.time()
         r = subprocess.call(cmd, shell=True)
         self._add_result("vnfd-delete", abs(time.time() - t_start))
         print("RETURN: {}".format(r))
-        if r != 0:
+        if r != 0 and not force:
             print("ERROR")
             exit(1)
 
@@ -254,6 +260,19 @@ class OsmZooTopology(TopologyZooTopology):
             print("Error: NS status parsing error.")
         return []
 
+    def _osm_parse_ns_list(self, input):
+        r = list()
+        for line in input.split("\n"):
+            parts = line.split("|")
+            parts = [p.strip(", +-") for p in parts]
+            parts = [p for p in parts if len(p) > 0]
+            if len(parts) > 0:
+                if parts[0] == "ns instance name":
+                    continue
+                r.append(parts[0])
+        print(r)
+        return r
+
     def _osm_get_ns_status(self, ns_name):
         r = self._osm_parse_ns_status(self._osm_ns_show(ns_name))
         if ("running" in r and "configured" in r):
@@ -271,9 +290,11 @@ class OsmZooTopology(TopologyZooTopology):
             print("Waiting for NS '{}' instantiation and configuration. Status: {} ({}/{})"
                   .format(iname, s, c, timeout))
             if s:
-                break
+                return
             time.sleep(.5)
             c += 1
+        print("ERROR: Instantiation timed out!!!")
+        exit(1)
 
     def _osm_wait_for_delete_vim(self, port, timeout=60):
         """
@@ -285,7 +306,7 @@ class OsmZooTopology(TopologyZooTopology):
             print("Waiting for VIM '{}' deletion. Status: {} ({}/{})"
                   .format(port, s, c, timeout))
             if s > 0:
-                break
+                return
             time.sleep(.5)
             c += 1
 
@@ -299,14 +320,16 @@ class OsmZooTopology(TopologyZooTopology):
             print("Waiting for NS '{}' deletion. Status: {} ({}/{})"
                   .format(iname, s, c, timeout))
             if s > 0:
-                break
+                return
             time.sleep(.5)
             c += 1
 
-    def _osm_delete_ns(self, iname, wait = True):
+    def _osm_delete_ns(self, iname, wait=True, force=False):
         cmd = "osm ns-delete {}".format(
             iname
         )
+        if force:
+            cmd = cmd + " --force"
         print("CALL: {}".format(cmd))
         t_start = time.time()
         r = subprocess.call(cmd, shell=True)
@@ -327,12 +350,12 @@ class OsmZooTopology(TopologyZooTopology):
         for p in self.get_keystone_endpoints():
             self._osm_create_vim(p)
 
-    def osm_delete_vims(self):
+    def osm_delete_vims(self, force=False):
         """
         Removes the emulated VIMs from the local OSM installation.
         """
         for p in self.osm_list_vims():
-            self._osm_delete_vim(p)
+            self._osm_delete_vim(p, force=force)
             self._osm_wait_for_delete_vim(p)
 
     def osm_list_vims(self):
@@ -353,10 +376,10 @@ class OsmZooTopology(TopologyZooTopology):
         self._osm_onboard_vnfd("examples/vnfs/ping.tar.gz")
         self._osm_onboard_nsd("examples/services/pingpong_nsd.tar.gz")
 
-    def osm_delete_service(self):
-        self._osm_delete_nsd("pingpong")
-        self._osm_delete_vnfd("ping")
-        self._osm_delete_vnfd("pong")
+    def osm_delete_service(self, force=False):
+        self._osm_delete_nsd("pingpong", force=force)
+        self._osm_delete_vnfd("ping", force=force)
+        self._osm_delete_vnfd("pong", force=force)
         time.sleep(4)
 
     def osm_instantiate_service(self, iname, port):
@@ -370,6 +393,11 @@ class OsmZooTopology(TopologyZooTopology):
     def osm_terminate_service(self, iname):
         self._osm_delete_ns(iname)
         time.sleep(4)
+
+    def osm_delete_nss(self, force=False):
+        nss = self._osm_parse_ns_list(self._osm_ns_list())
+        for ns in nss:
+            self._osm_delete_ns(ns, force=force)
 
 
 
@@ -470,6 +498,8 @@ def run_service_experiment(args, topo_cls):
     """
     t = topo_cls(args)
     print("Keystone endpoints: {}".format(t.get_keystone_endpoints()))
+    time.sleep(2)
+    t.osm_delete_vims()
     time.sleep(2)
     t.timer_start("time_total_vim_attach")
     t.osm_create_vims()
@@ -593,6 +623,7 @@ def main():
         #args.graph_file = "examples/topology_zoo/UsCarrier.graphml"
         t = OsmZooTopology(args)
         print("Keystone endpoints: {}".format(t.get_keystone_endpoints()))
+        t.osm_delete_vims()
         t.osm_create_vims()
         t.osm_show_vims()
         t.osm_list_vims()
@@ -607,6 +638,17 @@ def main():
         t.stop_topology()
         print(t.results)
         print(pd.DataFrame(t.osm_results))
+    elif str(args.experiment).lower() == "clean":
+        # form manual tests and debugging
+        args.graph_file = "examples/topology_zoo/Arpanet196912.graphml"
+        #args.graph_file = "examples/topology_zoo/UsCarrier.graphml"
+        t = OsmZooTopology(args)
+        print("Keystone endpoints: {}".format(t.get_keystone_endpoints()))
+        t.osm_delete_nss(force=True)
+        t.osm_delete_service(force=True)
+        t.osm_delete_vims(force=True)
+        #time.sleep(10)
+        t.stop_topology()
     elif str(args.experiment).lower() == "setup":
         args.topology_list = ["Abilene.graphml",
             "Arpanet196912.graphml",
@@ -658,8 +700,11 @@ if __name__ == '__main__':
 Examples:
 
     * sudo -E python examples/evaluation_osm4_zoo.py --experiment none
+    * sudo -E python examples/evaluation_osm4_zoo.py --experiment clean
     * sudo -E python examples/evaluation_osm4_zoo.py --experiment setup -r 2
     * sudo -E python examples/evaluation_osm4_zoo.py --experiment service -r 2
+
+time sudo -E ./run_service_experiments_osm4.sh > out.log 2>&1
 
 The -E flag is important to forward the environment to the sudo process:
 
