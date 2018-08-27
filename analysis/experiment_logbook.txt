@@ -1,0 +1,9 @@
+02.08.18	03.08.18	12,00	time python examples/evaluation_starttimes.py --experiment scaling -r 10	2018-08-03-tango1-scaling_experiment.pkl	old experiment: line, star, mesh up to 100
+03.08.18	07.08.18	83,73	time python examples/evaluation_starttimes.py --experiment scaling_log -r 10	2018-08-07-tango1-scaling_experiment_log.pkl	line, star up to 1024
+07.08.18	12.08.18	105,00	time python examples/evaluation_starttimes.py --experiment scaling_log_random -r 10	2018-08-12-tango1-scaling_experiment_log_random.pkl	new random up to 1024 k=0,5 and k=1,5
+14.08.18	15.08.18	25,30	time sudo python examples/evaluation_starttimes.py --experiment service2 -r 10 --no-run	2018-08-15-tango1-service_experiment_line_star.pkl	service start times: 8/128 PoPs, up to 256 VNFs, line/start
+15.08.18	16.08.18	25,30	time sudo python examples/evaluation_starttimes.py --experiment service3 -r 10 --no-run	2018-08-16-tango1-service_experiment_rdm05_rdm15.pkl	service start times: 8/128 PoPs, up to 256 VNFs, rdm05, rdm15
+21.08.18	22.08.18	9,56	time sudo python examples/evaluation_osm_zoo.py --experiment setup -r 10 --no-run	2018-08-21-tango1-osm31_zoo_experiment_setup.pkl	OSM v3.1 setup times
+23.08.18	34.08.18	11,25	time sudo -E python examples/evaluation_osm4_zoo.py --experiment setup -r 10 --no-run	2018-08-24-tango1-osm4_zoo_experiment_setup.pkl	OSM v4.0 setup times
+22.08.18	23.08.18	13,36	time sudo ./run_service_experiments.sh	multiple files in data/analysis/2018-08-23-osm3_service_results	OSM v3.1 service instantiation
+24.08.18	27.08.18	manual	time sudo -E ./run_service_experiments_osm4.sh	multiple files in data/analysis/2018-08-27-osm4_service_results	OSM v4.0 service instantiation
